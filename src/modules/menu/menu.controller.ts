@@ -12,14 +12,12 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { MenuService } from './menu.service';
-import { StorageService } from '../storage/storage.service';
 import { CreateProductDto } from './dtos/createProduct';
 
 @Controller('menu')
 export class MenuController {
   constructor(
     private readonly menuService: MenuService,
-    private readonly storageService: StorageService
   ) {}
 
   @Post('categories')

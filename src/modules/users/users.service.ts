@@ -2,7 +2,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { UserRole } from "./dtos/user-role.dto";
 import * as bcrypt from 'bcrypt';
-import { Injectable } from "@nestjs/common";
+import { ConflictException, HttpStatus, Injectable } from "@nestjs/common";
 
 @Injectable()
 export class UsersService {
@@ -13,11 +13,17 @@ export class UsersService {
     async createUser(data: CreateUserDto) {
 
         if (data.role === UserRole.CUSTOMER && !data.phone) {
-            throw new Error('Clientes devem fornecer um número de telefone.');
+            throw new ConflictException({
+                statusCode: HttpStatus.CONFLICT,
+                message: 'Clientes devem fornecer um número de telefone.'
+            });
         }
 
         if ([UserRole.ADMIN, UserRole.MANAGER, UserRole.KITCHEN,UserRole.DRIVER].includes(data.role) && !data.email) {
-            throw new Error('Funcionários devem fornecer um endereço de e-mail.');
+            throw new ConflictException({
+                statusCode: HttpStatus.CONFLICT,
+                message: 'Usuários com função administrativa devem fornecer um e-mail.'
+            });
         }
 
         if (data.email) {
@@ -26,7 +32,10 @@ export class UsersService {
             })
 
             if (emailExists) {
-                throw new Error('E-mail já está em uso.');
+                throw new ConflictException({
+                    statusCode: HttpStatus.CONFLICT,
+                    message: 'E-mail já está em uso.'
+                });
             }
         }
         if (data.phone) {
@@ -34,7 +43,10 @@ export class UsersService {
                 where: {phone: data.phone}
             })
             if (phoneExists) {
-                throw new Error('Número de telefone já está em uso.');
+                throw new ConflictException({
+                    statusCode: HttpStatus.CONFLICT,
+                    message: 'Número de telefone já está em uso.'
+                });
             }
         }
 
