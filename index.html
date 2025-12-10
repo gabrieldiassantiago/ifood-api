@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabriel Dias | Work in Progress</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Space Grotesk', 'sans-serif'],
+                        'hand': ['Permanent Marker', 'cursive'],
+                    },
+                    colors: {
+                        'marker-red': '#ff0000',
+                        'paper': '#f8f8f8',
+                    },
+                    cursor: {
+                        'pencil': 'url(https://img.icons8.com/ios-filled/50/000000/pencil.png) 0 50, auto',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8f8f8;
+            overflow-x: hidden;
+            cursor: crosshair; /* Cursor de mira para incentivar o desenho */
+        }
+        
+        /* Efeito de papel amassado sutil no fundo (opcional) */
+        .noise-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Animação para riscar texto */
+        .strike-anim {
+            position: relative;
+            display: inline-block;
+        }
+        .strike-anim::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 0;
+            height: 3px;
+            background: red;
+            transition: width 0.5s ease-in-out;
+            transform: rotate(-2deg);
+        }
+        .strike-anim:hover::after {
+            width: 100%;
+        }
+
+        /* Canvas de desenho */
+        #draw-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Fica atrás do texto principal mas acima do fundo */
+            pointer-events: all;
+        }
+
+        /* Conteúdo deve ficar acima do canvas */
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            pointer-events: none; /* Deixa o clique passar pro canvas nas áreas vazias */
+        }
+        .content-layer a, .content-layer button, .content-layer .interactive {
+            pointer-events: auto; /* Reativa cliques em links e botões */
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-yellow-300 selection:text-black">
+
+    <canvas id="draw-canvas"></canvas>
+    <div class="noise-bg"></div>
+
+    <main class="content-layer min-h-screen flex flex-col justify-center items-center p-6 relative">
+
+        <div class="absolute top-10 left-10 md:left-20 transform -rotate-12 opacity-80">
+            <p class="font-hand text-xl md:text-2xl text-gray-500">"dayum"</p>
+        </div>
+
+        <div class="absolute bottom-20 right-10 transform rotate-6 opacity-80">
+            <p class="font-hand text-3xl text-black">fun!</p>
+            <svg class="w-16 h-16 absolute -top-10 -left-5 text-black animate-pulse" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10,50 Q50,10 90,50 T90,90" />
+            </svg>
+        </div>
+
+        <div class="absolute top-20 right-20 md:right-40 transform rotate-3">
+            <p class="font-hand text-xl text-marker-red underline decoration-wavy decoration-2">coming soon...ish</p>
+        </div>
+
+        <div class="max-w-4xl w-full text-center space-y-8">
+            
+            <div class="relative inline-block mb-8">
+                <h2 class="text-xl md:text-3xl font-bold text-gray-400 line-through decoration-red-600 decoration-4 transform rotate-1">
+                    PORTFOLIO FINAL.PDF
+                </h2>
+                <span class="absolute -top-6 -right-10 font-hand text-red-600 text-xl transform -rotate-12">nah...</span>
+            </div>
+
+            <h1 class="text-6xl md:text-8xl font-sans font-bold tracking-tighter text-black leading-none">
+                GABRIEL <br>
+                <span class="relative inline-block">
+                    DIAS
+                    <svg class="absolute -top-4 -left-6 w-[120%] h-[120%] text-black pointer-events-none" viewBox="0 0 200 80" fill="none" stroke="currentColor" stroke-width="3">
+                        <path d="M10,40 Q50,5 180,30 Q190,35 185,50 Q160,75 20,60 Q5,55 10,40" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+            </h1>
+
+            <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-10 mt-6">
+                <p class="font-sans text-xl md:text-2xl font-bold uppercase tracking-widest bg-black text-white px-4 py-1 transform -rotate-2 interactive">
+                    Software Dev
+                </p>
+                <span class="font-hand text-2xl text-gray-400">+</span>
+                <p class="font-sans text-xl md:text-2xl font-bold uppercase tracking-widest border-2 border-black px-4 py-1 transform rotate-2 interactive hover:bg-black hover:text-white transition-colors">
+                    Product Designer
+                </p>
+            </div>
+
+            <div class="mt-16 text-left max-w-lg mx-auto relative">
+                <svg class="absolute -left-12 -top-8 w-10 h-10 text-black" viewBox="0 0 50 50" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10,10 L40,40 M40,10 L10,40" />
+                </svg>
+                
+                <p class="font-sans text-lg md:text-xl leading-relaxed">
+                    <span class="font-bold bg-yellow-300 px-1">Este não é um portfólio comum.</span> 
+                    Ainda estou construindo a versão "perfeita". Enquanto isso, este é meu manifesto: eu quebro códigos para consertá-los melhor. Eu desenho interfaces que funcionam, não apenas que parecem bonitas.
+                </p>
+                <p class="font-hand text-2xl mt-4 text-gray-600 transform -rotate-1">
+                    (o site real está compilando...)
+                </p>
+            </div>
+
+            <div class="mt-20 flex justify-center gap-8 font-sans font-bold text-lg">
+                <a href="#" class="strike-anim hover:text-red-600">GITHUB</a>
+                <a href="#" class="strike-anim hover:text-red-600">LINKEDIN</a>
+                <a href="#" class="strike-anim hover:text-red-600">EMAIL</a>
+            </div>
+            
+            <div class="mt-10">
+                 <p class="font-hand text-sm text-gray-400">P.S: Pode rabiscar a tela, eu deixo.</p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Lógica de Desenho (Scribble)
+        const canvas = document.getElementById('draw-canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            // Suporte para touch e mouse
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+            ctx.strokeStyle = '#222'; // Cor do "lápis"
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.lineWidth = 2; // Espessura fina tipo caneta
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(clientX, clientY);
+            ctx.stroke();
+            
+            // Randomiza levemente para parecer tinta falhando ou humana
+            if(Math.random() > 0.9) {
+                ctx.lineWidth = Math.random() * 3;
+            }
+
+            [lastX, lastY] = [clientX, clientY];
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            [lastX, lastY] = [clientX, clientY];
+        }
+
+        // Event Listeners Mouse
+        window.addEventListener('mousedown', startDrawing);
+        window.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', () => isDrawing = false);
+        window.addEventListener('mouseout', () => isDrawing = false);
+
+        // Event Listeners Touch (Mobile)
+        window.addEventListener('touchstart', startDrawing);
+        window.addEventListener('touchmove', draw);
+        window.addEventListener('touchend', () => isDrawing = false);
+
+    </script>
+</body>
+</html>
